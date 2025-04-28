@@ -1,0 +1,19 @@
+[package]
+name = "no-std-moving-average"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+authors = [
+    "Phil Markgraf <philip.markgraf@kel.vin>",
+    "Phil “Shaken” Markgraf <ShakenCodes@gmail.com>",
+]
+readme = "README.md"
+description = "Moving average filter for use in nostd environments."
+repository = "https://github.com/Radiator-Labs/no-std-moving-average-rs"
+categories = ["algorithms", "no-std", "no-std::no-alloc"]
+keywords = ["moving-average", "no-std"]
+
+[badges]
+maintenance = { status = "actively-developed" }
+
+[dependencies]

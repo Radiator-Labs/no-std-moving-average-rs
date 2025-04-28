@@ -1,0 +1,23 @@
+name: Cloud-CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest-m
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Cloud-CI no-std-moving-average
+      run: |
+        rustup show
+        cargo install cargo-machete
+        ./build.sh
