@@ -6,6 +6,84 @@ use core::{
 };
 use heapless::HistoryBuffer;
 
+/// # Intent
+/// Creates a Moving Average filter for integer values,
+/// in a nostd context. The filter uses a minimal calculation
+/// approach, and does not sum the entire buffer when finding
+/// the average.
+///
+/// # Instantiating `MovingAverage`
+///
+/// The `MovingAverage` type is generic over three values:
+///
+/// * T - the data type being averaged
+/// * TCALC - a larger data type for calculating the average
+///   * Must fit the value `N * T::MAX`
+/// * N - the depth of the average
+///   * Must be non-zero
+///
+/// # Example
+///
+/// ```rust
+/// use no_std_moving_average::MovingAverage;
+///
+/// let mut sut = MovingAverage::<u32, u64, 2>::new();
+/// let first: u32 = 22;
+/// let second: u32 = 44;
+/// let third: u32 = 66;
+/// let expected = (second + third) / 2;
+/// let _ = sut.average(first);
+/// let _ = sut.average(second);
+/// let result = sut.average(third);
+///
+/// assert_eq!(expected, result);
+/// ```
+///
+/// # Static and Allocation Asserts
+///
+/// A combination of compile-time and allocation time
+/// assertions are used to ensure `MovingAverage` is
+/// instantiated correctly. Once instantiated, there
+/// are no known Panics when operating `MovingAverage`.
+///
+/// ## T and TCALC must be Integer/Unsigned types
+///
+/// ```compile_fail
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<f32, u64, 2>::new();
+/// ```
+///
+/// ```compile_fail
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<u32, f64, 2>::new();
+/// ```
+///
+/// ```compile_fail
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<f32, f64, 2>::new();
+/// ```
+///
+/// ## TCALC must be larger than T
+///
+/// ```compile_fail
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<u32, u32, 1>::new();
+/// ```
+///
+/// ## N must be non-zero
+///
+/// ```compile_fail
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<u32, u64, 0>::new();
+/// ```
+///
+/// ## N * `T::MAX` must fit in TCALC
+///
+/// ```should_panic
+/// use no_std_moving_average::MovingAverage;
+/// let _sut = MovingAverage::<u8, u16, 512>::new();
+/// ```
+///
 pub struct MovingAverage<T, TCALC, const N: usize>
 where
     T: Sized + PartialEq + TryFrom<TCALC, Error: Debug> + Clone + Copy,

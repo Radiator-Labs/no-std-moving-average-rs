@@ -1,14 +1,12 @@
 # No-Std-Moving-Average [![Cloud-CI](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml/badge.svg)](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml)
 
-Guard-clause library, providing syntactic sugar to improve readability of
-[guard-clauses](https://en.wikipedia.org/wiki/Guard_(computer_science))
-in Rust code.
-
-## Intention
-
 This supplies a [moving average](https://en.wikipedia.org/wiki/Moving_average) algorithm that can be used in a nostd environment.
 
 To ensure that the behavior is consistent, the first insertion stuffs the entire buffer with the first value.
+
+## Limitations
+
+This library only supports integer quantities.
 
 ## Attribution
 
