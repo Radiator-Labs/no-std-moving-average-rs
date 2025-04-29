@@ -140,8 +140,8 @@ where
             assert!(N > 0, "N must be non-zero");
         }
         assert!(
-            (2_u128.pow(size_of::<T>() as u32) * u128::try_from(N).unwrap())
-                <= 2_u128.pow(size_of::<TCALC>() as u32),
+            (2_u128.pow((size_of::<T>() as u32) * 8) * u128::try_from(N).unwrap())
+                <= 2_u128.pow((size_of::<TCALC>() as u32) * 8),
             "N * T.max() must fit in TCALC"
         );
         Self {
@@ -224,6 +224,8 @@ where
 
 #[expect(clippy::let_underscore_must_use, reason = "Desirable in tests")]
 #[expect(clippy::let_underscore_untyped, reason = "Desirable in tests")]
+#[expect(clippy::cast_possible_truncation, reason = "Desirable in tests")]
+#[expect(clippy::cast_possible_wrap, reason = "Desirable in tests")]
 #[cfg(test)]
 mod tests {
     use super::MovingAverage;
@@ -267,6 +269,20 @@ mod tests {
         let second: i32 = 44;
         let third: i32 = -66;
         let expected = (second + third) / 2_i32;
+        let _ = sut.average(first);
+        let _ = sut.average(second);
+        assert_eq!(expected, sut.average(third));
+    }
+
+    #[test]
+    fn given_large_item_moving_average_when_average_called_thrice_then_return_average_of_the_last_two_values()
+     {
+        const DEPTH: usize = 128;
+        let mut sut = MovingAverage::<i32, i64, DEPTH>::new();
+        let first: i32 = -22;
+        let second: i32 = 44;
+        let third: i32 = -66;
+        let expected = (first + second + third + (((DEPTH as i32) - 3) * first)) / DEPTH as i32;
         let _ = sut.average(first);
         let _ = sut.average(second);
         assert_eq!(expected, sut.average(third));
