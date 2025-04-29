@@ -4,7 +4,7 @@ use core::{
     mem::size_of,
     ops::{Add, Div, Mul, Sub},
 };
-use heapless::HistoryBuf;
+use heapless::HistoryBuffer;
 
 pub struct MovingAverage<T, TCALC, const N: usize>
 where
@@ -23,7 +23,7 @@ where
 {
     num: TCALC,
     sum: Option<TCALC>,
-    buffer: HistoryBuf<T, N>,
+    buffer: HistoryBuffer<T, N>,
 }
 
 /// # Panics
@@ -57,7 +57,7 @@ where
         Self {
             num: TCALC::try_from(N).unwrap(),
             sum: None,
-            buffer: HistoryBuf::new(),
+            buffer: HistoryBuffer::new(),
         }
     }
 }
@@ -131,7 +131,7 @@ where
             self.buffer.len()
         );
 
-        TCALC::from(*self.buffer.oldest().expect("Buffer should be full"))
+        TCALC::from(*self.buffer.first().expect("Buffer should be full"))
     }
 }
 

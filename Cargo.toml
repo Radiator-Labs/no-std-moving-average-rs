@@ -17,6 +17,6 @@ keywords = ["moving-average", "no-std"]
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-heapless = "0.9.0"
+heapless = "0.8.0"
 
 [dev-dependencies]
