@@ -1,3 +1,4 @@
+set -xe
 cargo machete
 cargo build --release
 cargo fmt --all -- --check
