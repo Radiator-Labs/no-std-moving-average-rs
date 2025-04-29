@@ -27,9 +27,12 @@ where
 }
 
 /// # Panics
-/// Panics if TCALC not larger than T, allocation-time assert.
+/// Panics if TCALC not larger than T, compile-time assert.
+/// Panics if N is zero, compile-time assert.
+/// : These panics should never occur due to compile-time assert checks.
 /// Panics if unable to convert from usize to TCALC.
-/// This panic should never occur due to allocation-time assert checks.
+/// Panics if N * `T::MAX` won't fit in TCALC.
+/// : These panics happen at allocation time, so should be found predictably.
 #[expect(clippy::unwrap_used, reason = "Made safe by compile-time asserts")]
 impl<T, TCALC, const N: usize> Default for MovingAverage<T, TCALC, N>
 where
@@ -46,6 +49,10 @@ where
         + Clone
         + Copy,
 {
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "no size_of return bigger than u32"
+    )]
     fn default() -> Self {
         const {
             assert!(
@@ -54,6 +61,11 @@ where
             );
             assert!(N > 0, "N must be non-zero");
         }
+        assert!(
+            (2_u128.pow(size_of::<T>() as u32) * u128::try_from(N).unwrap())
+                <= 2_u128.pow(size_of::<TCALC>() as u32),
+            "N * T.max() must fit in TCALC"
+        );
         Self {
             num: TCALC::try_from(N).unwrap(),
             sum: None,
@@ -113,9 +125,6 @@ where
 
     #[expect(clippy::expect_used, reason = "Made safe by compile-time asserts")]
     fn create_average(&mut self, new_value: TCALC, prev_sum: TCALC, remove: TCALC) -> T {
-        #[cfg(test)]
-        assert!(prev_sum >= remove, "Remove must not be bigger than sum.");
-
         let new_sum = prev_sum + new_value - remove;
         self.sum = Some(new_sum);
         let average_as_tcalc = new_sum / self.num;
@@ -171,6 +180,31 @@ mod tests {
         let _ = sut.average(second);
         assert_eq!(expected, sut.average(third));
     }
+
+    #[test]
+    fn given_two_signed_item_moving_average_when_average_called_thrice_then_return_average_of_the_last_two_values()
+     {
+        let mut sut = MovingAverage::<i32, i64, 2>::new();
+        let first: i32 = -22;
+        let second: i32 = 44;
+        let third: i32 = -66;
+        let expected = (second + third) / 2_i32;
+        let _ = sut.average(first);
+        let _ = sut.average(second);
+        assert_eq!(expected, sut.average(third));
+    }
+
+    #[test]
+    #[should_panic(expected = "N * T.max() must fit in TCALC")]
+    fn confirm_n_times_t_max_fits_in_tcalc() {
+        let _sut = MovingAverage::<u8, u16, 512>::new();
+    }
+
+    // #[test]
+    // #[should_panic(expected = "T must be an integer type")]
+    // fn confirm_t_is_an_integer_type() {
+    //     let _sut = MovingAverage::<f32, u64, 2>::new();
+    // }
 
     // checked at compile time
     // #[test]
