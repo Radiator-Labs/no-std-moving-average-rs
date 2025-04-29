@@ -200,6 +200,7 @@ mod tests {
         let _sut = MovingAverage::<u8, u16, 512>::new();
     }
 
+    // fails at compile time, due to missing conversions
     // #[test]
     // #[should_panic(expected = "T must be an integer type")]
     // fn confirm_t_is_an_integer_type() {
