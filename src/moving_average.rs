@@ -282,7 +282,7 @@ mod tests {
         let first: i32 = -22;
         let second: i32 = 44;
         let third: i32 = -66;
-        let expected = (first + second + third + (((DEPTH as i32) - 3) * first)) / DEPTH as i32;
+        let expected = (first + second + third + (((DEPTH as i32) - 3_i32) * first)) / DEPTH as i32;
         let _ = sut.average(first);
         let _ = sut.average(second);
         assert_eq!(expected, sut.average(third));
