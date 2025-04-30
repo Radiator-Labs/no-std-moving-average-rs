@@ -1,4 +1,4 @@
-# No-Std-Moving-Average [![Cloud-CI](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml/badge.svg)](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml)
+# No-Std-Moving-Average [![Cloud-CI](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml/badge.svg)](https://github.com/Radiator-Labs/no-std-moving-average-rs/actions/workflows/cloud-ci.yml) [![crates.io](https://img.shields.io/crates/v/no-std-moving-average.svg)](https://crates.io/crates/no-std-moving-average) [![crates.io](https://img.shields.io/crates/d/no-std-moving-average.svg)](https://crates.io/crates/no-std-moving-average)
 
 This supplies a [moving average](https://en.wikipedia.org/wiki/Moving_average) algorithm that can be used in a nostd environment.
 
