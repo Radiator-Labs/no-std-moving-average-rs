@@ -139,7 +139,7 @@ where
             );
             assert!(N > 0, "N must be non-zero");
         }
-        assert!(
+        debug_assert!(
             (2_u128.pow((size_of::<T>() as u32) * 8) * u128::try_from(N).unwrap())
                 <= 2_u128.pow((size_of::<TCALC>() as u32) * 8),
             "N * T.max() must fit in TCALC"
