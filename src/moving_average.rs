@@ -218,7 +218,13 @@ where
             self.buffer.len()
         );
 
-        TCALC::from(*self.buffer.first().expect("Buffer should be full"))
+        TCALC::from(
+            *self
+                .buffer
+                .oldest_ordered()
+                .next()
+                .expect("Buffer should be full"),
+        )
     }
 }
 
@@ -286,6 +292,31 @@ mod tests {
         let _ = sut.average(first);
         let _ = sut.average(second);
         assert_eq!(expected, sut.average(third));
+    }
+
+    // Issue 1 replication case
+    // https://github.com/Radiator-Labs/no-std-moving-average-rs/issues/1
+    #[test]
+    fn given_enough_items_to_roll_over_when_average_called_then_return_average_of_the_correct_set_of_values()
+     {
+        let mut sut = MovingAverage::<u16, u32, 4>::new();
+        let sequence = [
+            100_u16, 200_u16, 300_u16, 400_u16, 100_u16, 200_u16, 300_u16, 400_u16, 100_u16,
+            200_u16, 300_u16, 400_u16,
+        ];
+        let expected = [
+            100_u16, 125_u16, 175_u16, 250_u16, 250_u16, 250_u16, 250_u16, 250_u16, 250_u16,
+            250_u16, 250_u16, 250_u16,
+        ];
+
+        for (i, val) in sequence.iter().enumerate() {
+            let avg = sut.average(*val);
+            assert_eq!(
+                expected[i], avg,
+                "Failed at {i}, is {avg}, should be {}",
+                expected[i]
+            );
+        }
     }
 
     #[test]
